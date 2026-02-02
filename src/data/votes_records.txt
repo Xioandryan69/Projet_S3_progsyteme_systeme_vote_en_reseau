@@ -5,3 +5,4 @@
 2026-02-02 21:38:29 - Électeur: E001, Candidat: Alice RAKOTO
 2026-02-02 21:38:30 - Électeur: E002, Candidat: Jean RABE
 2026-02-02 21:38:31 - Électeur: E003, Candidat: Marie ANDRY
+2026-02-02 21:57:17 - Électeur: E002, Candidat: Marie ANDRY
