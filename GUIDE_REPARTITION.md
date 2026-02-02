@@ -248,7 +248,7 @@ bash run_client.sh   # Terminal 2 - Client
 
 ### Jour 7 (Fin)
 - [ ] AdminClient créé
-- [ ] Export CSV/TXT fonctionne
+- [ ] Export TXT fonctionne
 
 ### Jour 8-10
 - [ ] Tests unitaires passent
@@ -300,8 +300,7 @@ done
 1. **Multithreading** : ✅ Chaque client = 1 thread
 2. **TCP Sockets** : ✅ Pas de WebSocket
 3. **Partage de code** : Git branches par personne
-4. **Synchronisation** : Réunions quotidiennes (15 min)
-5. **Sauvegardes** : Votes sauvegardés en fichier
+4. **Sauvegardes** : Votes sauvegardés en fichier
 
 ---
 
