@@ -1,15 +1,18 @@
 [
     {
       "id": "E001",
-      "code": "ABC123"
+      "code": "ABC123",
+      "estValable": true
     },
     {
       "id": "E002",
-      "code": "XYZ789"
+      "code": "XYZ789",
+      "estValable": false
     },
     {
       "id": "E003",
-      "code": "LMN456"
+      "code": "LMN456",
+      "estValable": true
     }
   ]
   

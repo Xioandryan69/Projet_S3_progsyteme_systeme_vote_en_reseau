@@ -19,24 +19,25 @@ public class DataStore {
     }
 
     private static void chargerElecteurs() {
-        try {
-            JsonArray array = JsonParser.parseReader(
-                    new FileReader("src/data/electeurs.json")
-            ).getAsJsonArray();
-
-            for (JsonElement e : array) {
-                JsonObject o = e.getAsJsonObject();
-                Electeur el = new Electeur(
-                        o.get("id").getAsString(),
-                        o.get("code").getAsString()
-                );
-                electeurs.put(el.getCode(), el);
-            }
-        } catch (Exception e) {
-            System.out.println("Erreur chargement électeurs");
-            e.printStackTrace();
+    try {
+        JsonArray array = JsonParser.parseReader(
+                new FileReader("src/data/electeurs.json")
+        ).getAsJsonArray();
+        for (JsonElement e : array) {
+            JsonObject o = e.getAsJsonObject();
+            Electeur el = new Electeur(
+                    o.get("id").getAsString(),
+                    o.get("code").getAsString(),
+                    false, // aVote par défaut
+                    o.get("estValable").getAsBoolean() // Lire le statut depuis le JSON
+            );
+            electeurs.put(el.getCode(), el);
         }
+    } catch (Exception e) {
+        System.out.println("Erreur chargement électeurs");
+        e.printStackTrace();
     }
+}
 
     private static void chargerCandidats() {
         try {

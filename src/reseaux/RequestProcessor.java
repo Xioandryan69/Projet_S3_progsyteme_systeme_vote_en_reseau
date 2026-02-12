@@ -63,28 +63,32 @@ public class RequestProcessor {
         return buildMessage(Protocol.CANDIDATS_LIST, candidats);
     }
 
-    /**
+   /**
      * Traiter la commande VOTE Format: VOTE|code_electeur|candidat_id
      */
     private static String traiterVote(Message message) {
         if (message.getParamCount() < 2) {
             return buildMessage(Protocol.VOTE_REJECTED, "Paramètres manquants");
         }
-
         String code = message.getParam(1);
         String candidatIdStr = message.getParam(2);
-
         int candidatId;
+        
         try {
             candidatId = Integer.parseInt(candidatIdStr);
         } catch (NumberFormatException e) {
             return buildMessage(Protocol.VOTE_REJECTED, Protocol.CANDIDAT_INVALIDE);
         }
-
+        
+        // Vérifier le statut de l'électeur
+        if (!VoteService.isStatutValable(code)) {
+            return buildMessage(Protocol.VOTE_REJECTED, Protocol.STATUT_INVALIDE);
+        }
+        
         if (!VoteService.candidatExiste(candidatId)) {
             return buildMessage(Protocol.VOTE_REJECTED, Protocol.CANDIDAT_INVALIDE);
         }
-
+        
         if (VoteService.enregistrerVote(code, candidatId)) {
             return buildMessage(Protocol.VOTE_ACCEPTED);
         } else {

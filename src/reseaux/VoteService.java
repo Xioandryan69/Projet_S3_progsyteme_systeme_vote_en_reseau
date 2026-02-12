@@ -38,21 +38,37 @@ public class VoteService {
     }
 
     /**
+     * Vérifier si l'électeur possède un statut valable
+     */
+    public static boolean isStatutValable(String code) {
+        Electeur electeur = DataStore.electeurs.get(code);
+        return electeur != null && electeur.isEstValable();
+    }
+
+    /**
      * Enregistrer un vote
      */
     public static boolean enregistrerVote(String electeurCode, int candidatId) {
         Electeur electeur = DataStore.electeurs.get(electeurCode);
         Candidat candidat = DataStore.candidats.get(candidatId);
 
+        // Vérifier que l'électeur et le candidat existent
         if (electeur == null || candidat == null) {
             return false;
         }
 
+        // Vérifier que l'électeur n'a pas déjà voté
         if (electeur.isAVote()) {
             return false;
         }
 
+        // Vérifier que le vote est ouvert
         if (!DataStore.voteOuvert) {
+            return false;
+        }
+
+        // Vérifier que l'électeur possède un statut valable
+        if (!electeur.isEstValable()) {
             return false;
         }
 
