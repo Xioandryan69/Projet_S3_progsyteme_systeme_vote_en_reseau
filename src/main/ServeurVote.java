@@ -1,13 +1,14 @@
 package main;
 
+import data.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import data.*;
 import reseaux.ClientHandler;
 
 public class ServeurVote
 {
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         int port = 5000;
 
         DataStore.chargerDonnees();
