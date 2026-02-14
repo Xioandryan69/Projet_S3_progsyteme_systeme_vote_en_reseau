@@ -47,6 +47,7 @@ public class Protocol {
     public static final String CODE_INVALIDE     = "CODE_INVALIDE";
     public static final String DEJA_VOTE         = "DEJA_VOTE";
     public static final String CANDIDAT_INVALIDE = "CANDIDAT_INVALIDE";
+    public static final String STATUT_INVALIDE = "STATUT_INVALIDE"; 
     public static final String SESSION_FERMEE    = "SESSION_FERMEE";
 
     // (Optionnel) codes d'erreur supplémentaires pour sondages

@@ -50,14 +50,11 @@ public class VoteClientGUI
 
     private final DefaultListModel<String> optionsModel;     
     private final JList<String> optionsList;
-    private final JLabel selectedPollLabel;                    // Affiche le sondage actif
+    private final JLabel selectedPollLabel;                    
 
-    private int currentPollId = -1;                            // ID du sondage sélectionné
+    private int currentPollId = -1;                          
     private String currentPollTitle = "";
 
-    // ------------------------------------------------------------
-    // Constructeur
-    // ------------------------------------------------------------
     public VoteClientGUI() 
     {
  
@@ -97,7 +94,7 @@ public class VoteClientGUI
         voteButton             = new JButton("Voter");
         resultsButton          = new JButton("Résultats");
 
-        // --- Boutons onglet Sondages ---
+        // --- onglet Sondages ---
         refreshPollsButton = new JButton("Actualiser sondages");
         createPollButton   = new JButton("Créer un sondage");
         selectPollButton   = new JButton("Choisir ce sondage");
@@ -105,22 +102,22 @@ public class VoteClientGUI
         resultsPollButton  = new JButton("Résultats (sondage)");
         selectedPollLabel  = new JLabel("Aucun sondage sélectionné");
 
-        // --- Branchement des actions (communs) ---
+      
         connectButton.addActionListener(e -> connecter());
         loginButton.addActionListener(e -> authentifier());
         disconnectButton.addActionListener(e -> deconnecter());
-
-        // --- Actions onglet Vote classique ---
+     
         refreshCandidatsButton.addActionListener(e -> chargerCandidats());
         voteButton.addActionListener(e -> voterClassique());
         resultsButton.addActionListener(e -> afficherResultatsClassiques());
 
-        // --- Actions onglet Sondages ---
         refreshPollsButton.addActionListener(e -> chargerListeSondages());
         createPollButton.addActionListener(e -> creerSondage());
-        selectPollButton.addActionListener(e -> {
+        selectPollButton.addActionListener(e -> 
+        {
             int idx = pollsList.getSelectedIndex();
-            if (idx != -1) {
+            if (idx != -1) 
+            {
                 String selection = pollsModel.get(idx);
                 // format attendu : "id: titre"
                 String[] parts = selection.split(":", 2);
@@ -139,10 +136,11 @@ public class VoteClientGUI
                 log("Veuillez sélectionner un sondage dans la liste.");
             }
         });
+
+
         votePollButton.addActionListener(e -> voterSondage());
         resultsPollButton.addActionListener(e -> afficherResultatsSondage());
 
-        // --- Construction de l'interface ---
         JPanel root = new JPanel(new BorderLayout(10, 10));
         root.setBorder(new EmptyBorder(12, 12, 12, 12));
 
@@ -163,8 +161,8 @@ public class VoteClientGUI
         frame.setContentPane(root);
         updateUiState();
 
-        // Fermeture propre
-        frame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() 
+        {
             @Override
             public void windowClosing(WindowEvent e) {
                 deconnecter();
@@ -225,11 +223,11 @@ public class VoteClientGUI
         return panel;
     }
 
-    private JPanel buildPollPanel() {
+    private JPanel buildPollPanel() 
+    {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Partie gauche : liste des sondages
         JPanel left = new JPanel(new BorderLayout(5, 5));
         left.setBorder(BorderFactory.createTitledBorder("Sondages disponibles"));
         left.add(new JScrollPane(pollsList), BorderLayout.CENTER);
@@ -238,18 +236,15 @@ public class VoteClientGUI
         leftButtons.add(createPollButton);
         left.add(leftButtons, BorderLayout.SOUTH);
 
-        // Partie droite : options et actions du sondage sélectionné
         JPanel right = new JPanel(new BorderLayout(5, 5));
         right.setBorder(BorderFactory.createTitledBorder("Options du sondage"));
         right.add(new JScrollPane(optionsList), BorderLayout.CENTER);
 
-        // Sélection du sondage actif
         JPanel selectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         selectionPanel.add(selectPollButton);
         selectionPanel.add(selectedPollLabel);
         right.add(selectionPanel, BorderLayout.NORTH);
 
-        // Boutons de vote et résultats
         JPanel rightButtons = new JPanel(new GridLayout(2, 1, 5, 5));
         rightButtons.add(votePollButton);
         rightButtons.add(resultsPollButton);
@@ -260,10 +255,9 @@ public class VoteClientGUI
         return panel;
     }
 
-    // ------------------------------------------------------------
-    // Méthodes de communication réseau
-    // ------------------------------------------------------------
-    private void connecter() {
+    //Communications réseau
+    private void connecter() 
+    {
         if (connecte) { log("Déjà connecté."); return; }
         String server = serverField.getText().trim();
         String portStr = portField.getText().trim();
@@ -289,7 +283,8 @@ public class VoteClientGUI
         }).start();
     }
 
-    private void authentifier() {
+    private void authentifier() 
+    {
         if (!connecte) { log("Connectez-vous d'abord."); return; }
         String code = codeField.getText().trim();
         if (code.isEmpty()) { log("Code électeur vide."); return; }
@@ -310,7 +305,8 @@ public class VoteClientGUI
         }).start();
     }
 
-    private void deconnecter() {
+    private void deconnecter() 
+    {
         try {
             if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException ignored) {}
@@ -323,20 +319,43 @@ public class VoteClientGUI
         log("Déconnecté.");
     }
 
-    private String envoyerMessage(String message) {
+    private String envoyerMessage(String message) 
+    {
         try {
+            if (out == null || in == null) 
+            {
+                connecte = false;
+                authentifie = false;
+                SwingUtilities.invokeLater(this::updateUiState);
+                return "ERROR|SESSION_FERMEE";
+            }
+    
             out.println(message);
             String response = in.readLine();
-            return response != null ? response : "";
-        } catch (IOException e) {
+    
+            if (response == null) 
+            {
+                // La connexion est probablement fermée côté serveur
+                connecte = false;
+                authentifie = false;
+                SwingUtilities.invokeLater(this::updateUiState);
+                return "ERROR|SESSION_FERMEE";
+            }
+    
+            return response;
+    
+        } 
+        catch (IOException e) 
+        {
+            connecte = false;
+            authentifie = false;
+            SwingUtilities.invokeLater(this::updateUiState);
             log("Erreur de communication : " + e.getMessage());
             return "ERROR|" + e.getMessage();
         }
     }
 
-    // ------------------------------------------------------------
-    // Fonctionnalités du vote classique (candidats)
-    // ------------------------------------------------------------
+
     private void chargerCandidats() {
         if (!connecte) { log("Connectez-vous d'abord."); return; }
         new Thread(() -> {
@@ -357,7 +376,8 @@ public class VoteClientGUI
         }).start();
     }
 
-    private void voterClassique() {
+    private void voterClassique() 
+    {
         if (!authentifie) { log("Authentifiez-vous d'abord."); return; }
         String selection = candidatsList.getSelectedValue();
         if (selection == null || selection.isEmpty()) {
@@ -377,7 +397,8 @@ public class VoteClientGUI
         }).start();
     }
 
-    private void afficherResultatsClassiques() {
+    private void afficherResultatsClassiques() 
+    {
         if (!connecte) { log("Connectez-vous d'abord."); return; }
         new Thread(() -> {
             String response = envoyerMessage(new Message(Protocol.GET_RESULTS).toString());
@@ -390,7 +411,8 @@ public class VoteClientGUI
         }).start();
     }
 
-    private Map<Integer, String> parseCandidats(String list) {
+    private Map<Integer, String> parseCandidats(String list)
+     {
         Map<Integer, String> map = new LinkedHashMap<>();
         if (list == null || list.isEmpty()) return map;
         String[] items = list.split("\\|");
@@ -410,53 +432,108 @@ public class VoteClientGUI
     // ------------------------------------------------------------
     // Fonctionnalités des sondages
     // ------------------------------------------------------------
-    private void chargerListeSondages() 
-    {
+    private void chargerListeSondages() {
 
-        if (!connecte) 
-        { log("Connectez-vous d'abord."); return; }
-        new Thread(() -> 
-        {
-            String response = envoyerMessage(new Message(Protocol.GET_POLLS).toString());
+        if (!connecte) { 
+            log("Connectez-vous d'abord."); 
+            return; 
+        }
+    
+        refreshPollsButton.setEnabled(false);
+    
+        new Thread(() -> {
+    
+            String response = envoyerMessage(
+                    new Message(Protocol.GET_POLLS).toString()
+            );
+    
             if (response.startsWith(Protocol.POLLS_LIST)) {
-                String list = response.substring(Protocol.POLLS_LIST.length() + 1);
-
+    
+                String list = response.substring(
+                        Protocol.POLLS_LIST.length() + 1
+                );
+    
                 SwingUtilities.invokeLater(() -> {
+    
                     pollsModel.clear();
+    
                     if (list.isEmpty()) {
                         pollsModel.addElement("Aucun sondage disponible");
                     } else {
                         String[] polls = list.split("\\|");
                         for (String p : polls) {
-                            if (!p.trim().isEmpty())
+                            if (!p.trim().isEmpty()) {
                                 pollsModel.addElement(p.trim());
+                            }
                         }
                     }
+    
+                    // Réinitialisation propre
+                    currentPollId = -1;
+                    currentPollTitle = "";
+                    selectedPollLabel.setText("Aucun sondage sélectionné");
+    
+                    refreshPollsButton.setEnabled(true);
+                    updateUiState();
                 });
+    
                 log("Liste des sondages reçue.");
+    
             } else {
+                SwingUtilities.invokeLater(() -> {
+                    refreshPollsButton.setEnabled(true);
+                    updateUiState();
+                });
+    
                 log("Erreur chargement sondages : " + response);
             }
+    
         }).start();
     }
 
     private void chargerOptionsSondage(int pollId) {
-        if (!connecte) { log("Connectez-vous d'abord."); return; }
+
+        if (!connecte) { 
+            log("Connectez-vous d'abord."); 
+            return; 
+        }
+    
         new Thread(() -> {
-            String response = envoyerMessage(new Message(Protocol.GET_OPTIONS, String.valueOf(pollId)).toString());
+    
+            String response = envoyerMessage(
+                    new Message(
+                            Protocol.GET_OPTIONS, 
+                            String.valueOf(pollId)
+                    ).toString()
+            );
+    
             if (response.startsWith(Protocol.OPTIONS_LIST)) {
-                String list = response.substring(Protocol.OPTIONS_LIST.length() + 1);
+    
+                String list = response.substring(
+                        Protocol.OPTIONS_LIST.length() + 1
+                );
+    
                 Map<Integer, String> opts = parseOptions(list);
+    
                 SwingUtilities.invokeLater(() -> {
+    
                     optionsModel.clear();
+    
                     for (Map.Entry<Integer, String> entry : opts.entrySet()) {
-                        optionsModel.addElement(entry.getKey() + " - " + entry.getValue());
+                        optionsModel.addElement(
+                                entry.getKey() + " - " + entry.getValue()
+                        );
                     }
+    
+                    updateUiState();
                 });
+    
                 log("Options du sondage #" + pollId + " chargées.");
+    
             } else {
                 log("Erreur chargement options : " + response);
             }
+    
         }).start();
     }
 

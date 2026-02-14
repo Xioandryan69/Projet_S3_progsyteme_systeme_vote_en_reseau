@@ -1,51 +1,46 @@
 package model;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
-public class Poll
-{
+public class Poll {
+
     private int id;
+    private String titre;
+    private List<Option> options;
+    private boolean ouvert;
+    private LocalDateTime deadline;   // ✅ NOUVEAU
 
-    public Poll(int id, String titre, List<Option> options, boolean ouvert) {
+    public Poll(int id, String titre, List<Option> options, boolean ouvert, LocalDateTime deadline) {
         this.id = id;
         this.titre = titre;
         this.options = options;
         this.ouvert = ouvert;
+        this.deadline = deadline;  // ✅
     }
-
-    private String titre;
-    private List<Option> options;
-    private boolean ouvert; // par défaut true
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitre() {
         return titre;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
-    }
-
     public List<Option> getOptions() {
         return options;
-    }
-
-    public void setOptions(List<Option> options) {
-        this.options = options;
     }
 
     public boolean isOuvert() {
         return ouvert;
     }
 
-    public void setOuvert(boolean ouvert) {
-        this.ouvert = ouvert;
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
+    // ✅ Vérifie si le sondage est encore valide
+    public boolean estEncoreValide() {
+        return deadline == null || LocalDateTime.now().isBefore(deadline);
     }
 }

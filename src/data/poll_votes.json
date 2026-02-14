@@ -10,5 +10,35 @@
     "pollId": 1,
     "optionId": 2,
     "timestamp": "2026-02-11 19:08:06"
+  },
+  {
+    "electeurId": "E003",
+    "pollId": 1,
+    "optionId": 1,
+    "timestamp": "2026-02-14 15:28:48"
+  },
+  {
+    "electeurId": "E003",
+    "pollId": 2,
+    "optionId": 1,
+    "timestamp": "2026-02-14 15:28:57"
+  },
+  {
+    "electeurId": "E002",
+    "pollId": 1,
+    "optionId": 1,
+    "timestamp": "2026-02-14 15:29:52"
+  },
+  {
+    "electeurId": "E001",
+    "pollId": 3,
+    "optionId": 2,
+    "timestamp": "2026-02-14 15:56:18"
+  },
+  {
+    "electeurId": "E003",
+    "pollId": 3,
+    "optionId": 1,
+    "timestamp": "2026-02-14 15:57:46"
   }
 ]

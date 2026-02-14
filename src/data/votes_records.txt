@@ -1,1 +1,3 @@
 2026-02-10 15:08:04 - Électeur: E003, Candidat: Marie ANDRY
+2026-02-14 15:28:34 - Électeur: E003, Candidat: Jean RABE
+2026-02-14 16:53:19 - Électeur: E001, Candidat: Jean RABE

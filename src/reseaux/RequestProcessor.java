@@ -108,6 +108,12 @@ public class RequestProcessor
             return buildMessage(Protocol.VOTE_REJECTED, Protocol.CANDIDAT_INVALIDE);
         }
 
+        // Vérifier le statut de l'électeur
+        if (!VoteService.isStatutValable(code)) {
+            return buildMessage(Protocol.VOTE_REJECTED, Protocol.STATUT_INVALIDE);
+        }
+
+        
         if (!VoteService.candidatExiste(candidatId)) {
             return buildMessage(Protocol.VOTE_REJECTED, Protocol.CANDIDAT_INVALIDE);
         }
@@ -138,21 +144,36 @@ public class RequestProcessor
      */
     private static String traiterCreatePoll(Message message) 
     {
-        if (message.getParamCount() < 3) 
+        if (message.getParamCount() < 4) 
         {
             return buildMessage(Protocol.CREATE_POLL_FAILED, "Paramètres manquants");
         }
-
+    
         String code = message.getParam(1);
+    
         if (!VoteService.authentifierUtilisateur(code)) 
         {
             return buildMessage(Protocol.CREATE_POLL_FAILED, Protocol.CODE_INVALIDE);
         }
-
+    
         String titre = message.getParam(2);
+        String deadlineStr = message.getParam(3);
+    
+        java.time.LocalDateTime deadline;
+    
+        try {
+            java.time.format.DateTimeFormatter formatter =
+                    java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            deadline = java.time.LocalDateTime.parse(deadlineStr, formatter);
+        } 
+        catch (Exception e) 
+        {
+            return buildMessage(Protocol.CREATE_POLL_FAILED, "Deadline invalide (format yyyy-MM-dd HH:mm)");
+        }
+    
         List<String> options = new ArrayList<>();
-        // Les options commencent à l'index 3
-        for (int i = 3; i <= message.getParamCount(); i++) 
+    
+        for (int i = 4; i <= message.getParamCount(); i++) 
         {
             String opt = message.getParam(i);
             if (opt != null && !opt.trim().isEmpty()) 
@@ -160,13 +181,14 @@ public class RequestProcessor
                 options.add(opt.trim());
             }
         }
-
+    
         if (options.isEmpty()) 
         {
             return buildMessage(Protocol.CREATE_POLL_FAILED, "Aucune option valide");
         }
-
-        int pollId = PollService.creerPoll(titre, options);
+    
+        int pollId = PollService.creerPoll(titre, options, deadline);
+    
         return buildMessage(Protocol.CREATE_POLL_SUCCESS, String.valueOf(pollId));
     }
 
