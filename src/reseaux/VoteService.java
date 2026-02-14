@@ -4,6 +4,7 @@ import data.DataStore;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import model.*;
 
 /**
  * Classe pour traiter la logique de vote Gère l'authentification, la validation
@@ -38,6 +39,8 @@ public class VoteService {
     /**
      * Enregistrer un vote
      */
+    public static boolean enregistrerVote(String electeurCode, int candidatId) 
+    {
         Electeur electeur = DataStore.electeurs.get(electeurCode);
         Candidat candidat = DataStore.candidats.get(candidatId);
 
@@ -69,6 +72,10 @@ public class VoteService {
     /**
      * Sauvegarder le vote dans un fichier
      */
+    private static void sauvegarderVote(String electeurId, String candidatNom) 
+    {
+        try (FileWriter writer = new FileWriter(VOTES_FILE, true)) 
+        {
             String timestamp = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             String ligne = timestamp + " - Électeur: " + electeurId + ", Candidat: " + candidatNom + "\n";
@@ -84,6 +91,8 @@ public class VoteService {
     public static String obtenirResultats() {
         StringBuilder resultats = new StringBuilder();
 
+        for (Candidat candidat : DataStore.candidats.values()) 
+        {
             long count = DataStore.votes.stream()
                     .filter(v -> v.getCandidatId() == candidat.getId())
                     .count();
@@ -91,6 +100,8 @@ public class VoteService {
         }
 
         // Supprimer le dernier délimiteur
+        if (resultats.length() > 0) 
+        {
             resultats.setLength(resultats.length() - 1);
         }
 
@@ -100,8 +111,12 @@ public class VoteService {
     /**
      * Obtenir la liste des candidats formatée
      */
+    public static String obtenirListeCandidats() 
+    {
         StringBuilder liste = new StringBuilder();
 
+        for (Candidat candidat : DataStore.candidats.values()) 
+        {
             liste.append(candidat.getId()).append(":").append(candidat.getNom()).append("|");
         }
 
