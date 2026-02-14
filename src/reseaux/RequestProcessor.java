@@ -1,10 +1,7 @@
 package reseaux;
 
 /**
- * Classe pour traiter les requêtes des clients Décide quelle action effectuer
- * selon la commande reçue
  */
-public class RequestProcessor {
 
     /**
      * Traiter une requête et retourner la réponse
@@ -19,13 +16,10 @@ public class RequestProcessor {
         switch (commande) {
             case Protocol.LOGIN:
                 return traiterLogin(message);
-
             case Protocol.GET_CANDIDATS:
                 return traiterGetCandidats();
-
             case Protocol.VOTE:
                 return traiterVote(message);
-
             case Protocol.GET_RESULTS:
                 return traiterGetResults();
 
@@ -35,7 +29,6 @@ public class RequestProcessor {
     }
 
     /**
-     * Traiter la commande LOGIN Format: LOGIN|code_electeur
      */
     private static String traiterLogin(Message message) {
         if (message.getParamCount() < 1) {
@@ -58,16 +51,13 @@ public class RequestProcessor {
     /**
      * Traiter la commande GET_CANDIDATS
      */
-    private static String traiterGetCandidats() {
         String candidats = VoteService.obtenirListeCandidats();
         return buildMessage(Protocol.CANDIDATS_LIST, candidats);
     }
 
     /**
-     * Traiter la commande VOTE Format: VOTE|code_electeur|candidat_id
      */
     private static String traiterVote(Message message) {
-        if (message.getParamCount() < 2) {
             return buildMessage(Protocol.VOTE_REJECTED, "Paramètres manquants");
         }
 
@@ -85,9 +75,7 @@ public class RequestProcessor {
             return buildMessage(Protocol.VOTE_REJECTED, Protocol.CANDIDAT_INVALIDE);
         }
 
-        if (VoteService.enregistrerVote(code, candidatId)) {
             return buildMessage(Protocol.VOTE_ACCEPTED);
-        } else {
             return buildMessage(Protocol.VOTE_REJECTED, "Impossible d'enregistrer le vote");
         }
     }
@@ -95,13 +83,11 @@ public class RequestProcessor {
     /**
      * Traiter la commande GET_RESULTS
      */
-    private static String traiterGetResults() {
         String resultats = VoteService.obtenirResultats();
         return buildMessage(Protocol.RESULTS, resultats);
     }
 
     /**
-     * Construire un message avec délimiteurs
      */
     private static String buildMessage(String... parts) {
         return String.join(Protocol.DELIMITER, parts);

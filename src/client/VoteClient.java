@@ -1,10 +1,10 @@
 package client;
 
-import reseaux.Message;
-import reseaux.Protocol;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import reseaux.Message;
+import reseaux.Protocol;
 
 /**
  * Client de vote Se connecte au serveur et permet aux utilisateurs de voter
@@ -17,6 +17,7 @@ public class VoteClient {
     private Scanner scanner;
     private String electeurCode;
     private boolean connecte = false;
+    public String ipHote = "192.168.78.90";
 
     public VoteClient(String adresseServeur, int port) {
         this.scanner = new Scanner(System.in);
@@ -228,8 +229,8 @@ public class VoteClient {
         System.out.println("✓ Connexion fermée");
     }
 
-    public static void main(String[] args) {
-        String adresseServeur = "localhost";
+    public  void main(String[] args) {
+        String adresseServeur = ipHote;
         int port = 5000;
 
         if (args.length >= 1) {
