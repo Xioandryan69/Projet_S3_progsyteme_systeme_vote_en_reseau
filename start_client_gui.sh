@@ -5,7 +5,9 @@
 cd "$(dirname "$0")" || exit
 
 # Compilation
-javac -cp "lib/gson.jar:." -d bin \
+CP="lib/gson.jar:lib/flatlaf-3.6.1.jar:."
+
+javac -cp "$CP" -d bin \
     src/main/*.java \
     src/reseaux/*.java \
     src/model/*.java \
@@ -18,4 +20,4 @@ if [ $? -ne 0 ]; then
 fi
 
 # Démarrer le client GUI
-java -cp "lib/gson.jar:bin:." client.VoteClientGUI
+java -cp "lib/gson.jar:lib/flatlaf-3.6.1.jar:bin:." client.VoteClientGUI
